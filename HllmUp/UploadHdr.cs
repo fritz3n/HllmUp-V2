@@ -46,7 +46,7 @@ namespace HllmUp
 
         public static bool Login(string name,string pass)
         {
-            string result = postRequest("https://hllm.ddns.net/php/upload/login", new NameValueCollection()
+            string result = PostRequest("https://hllm.tk/php/upload/login", new NameValueCollection()
                         {
                 {"Username", name },
                 {"Password", pass }
@@ -63,7 +63,7 @@ namespace HllmUp
                     RegistryHdr.setValue("active", "true");
                     GetName();
                 }
-                catch(Exception e)
+                catch
                 {
                     LoggedIn = false;
                 }
@@ -99,7 +99,7 @@ namespace HllmUp
 
         static public string GetName()
         {
-            Username = postRequest("https://hllm.ddns.net/php/upload/confirm", new NameValueCollection()
+            Username = PostRequest("https://hllm.tk/php/upload/confirm", new NameValueCollection()
                         {
                 {"uid", Filedata[0] },
                 {"utk", Filedata[1] }
@@ -115,17 +115,21 @@ namespace HllmUp
             try
             {
                 return Username;
-            }catch(Exception e)
+            }catch
             {
                 return "";
             }
         }
 
-        private static string postRequest(string url, NameValueCollection dta)
+        private static string PostRequest(string url, NameValueCollection dta)
         {
+            ServicePointManager.Expect100Continue = true;
+            ServicePointManager.SecurityProtocol = SecurityProtocolType.Ssl3 | SecurityProtocolType.Tls | SecurityProtocolType.Tls11 | SecurityProtocolType.Tls12;
+
             string result = "";
             using (WebClient client = new WebClient())
             {
+
                 try
                 {
                     byte[] response = client.UploadValues(url, dta);
@@ -133,7 +137,7 @@ namespace HllmUp
                     result = System.Text.Encoding.UTF8.GetString(response);
 
                 }
-                catch (Exception e)
+                catch 
                 {
                     MessageBox.Show("There is an error with:\n"+url);
                 }
@@ -222,7 +226,7 @@ namespace HllmUp
 
                     Console.WriteLine("Uploading " + filename + (subdir != "" ? " under: " + subdir : ""));
 
-                    string response = postRequest("https://hllm.ddns.net/php/upload/upload", new NameValueCollection()
+                    string response = PostRequest("https://hllm.tk/php/upload/upload", new NameValueCollection()
                             {
                             {"uid", Filedata[0] },
                             {"utk", Filedata[1] },
@@ -268,7 +272,7 @@ namespace HllmUp
 
                     if (token)
                     {
-                        string response = postRequest("https://hllm.ddns.net/php/upload/token", new NameValueCollection()
+                        string response = PostRequest("https://hllm.tk/php/upload/token", new NameValueCollection()
                         {
                         {"uid", Filedata[0] },
                         {"utk", Filedata[1] },
